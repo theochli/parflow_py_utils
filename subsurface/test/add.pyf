@@ -1,0 +1,16 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module add ! in 
+    interface  ! in :add
+        subroutine zadd(a,b,c,n) ! in :add:add.f
+            double complex dimension(*) :: a
+            double complex dimension(*) :: b
+            double complex intent(out),dimension(n) :: c
+            integer intent(hide),depend(a) :: n=len(a)
+        end subroutine zadd
+    end interface 
+end python module add
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
