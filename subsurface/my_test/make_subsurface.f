@@ -41,7 +41,7 @@ C     END SPECIFICATIONS
 
 C     Read in land cover file  -- is this do needed here?
       do j = 1, ny
-           read(14,*) (landco(i, j) , i=1,nx)
+           read(14,*) (landco(i, (ny+1)-j) , i=1,nx)
       end do
 
 
@@ -57,11 +57,12 @@ C     Write Mannings
       end do
 
 C     Subsurface Layers
+C     the "surface" layer is nz
       do i = 1, nx
            do j= 1, ny
-                do k= 1, nz
+                do k= nz, 1, -1
 C     Surface Layers
-                     if(k.lt.5) then
+                     if(k.eq.nz) then
                          print*, i,j,k
 C          Urban
                          if (landco(i,j).eq.1) then
@@ -74,17 +75,17 @@ C          Forested
                          end if
                      end if
 C     Common Saprolite Layers
-                     if((k.lt.8.and.(k.ge.5))) then
+                     if((k.lt.10.and.(k.ge.8))) then
                               permeability(i,j,k)=0.00556d0
                               indicator(i,j,k)=2.0d0
                      end if
 C     Common TZ Layers
-                     if((k.lt.10.and.(k.ge.8))) then
+                     if((k.lt.8.and.(k.ge.5))) then
                               permeability(i,j,k)=0.227d0
                               indicator(i,j,k)=3.0d0
                      end if
 C     Common Bedrock Layer
-                     if(k.eq.10) then
+                     if(k.eq.1) then
                               permeability(i,j,k)=0.00001d0
                               indicator(i,j,k)=4.0d0
                      end if
