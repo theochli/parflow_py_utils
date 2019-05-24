@@ -1,6 +1,3 @@
-C    program convert2parflow creates ParFlow slope input files from a DEM
-C    Copyright (C) 2012  Michael L. Barnes
-C
 C    This program is free software: you can redistribute it and/or modify
 C    it under the terms of the GNU General Public License as published by
 C    the Free Software Foundation, either version 3 of the License, or
@@ -13,11 +10,11 @@ C    GNU General Public License for more details.
 C
 C    You should have received a copy of the GNU General Public License
 C    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-C     
+C
 C    subroutine pf_write distilled from ParFlow pftools prepostproc r605
       subroutine pf_write(x,filename,ixlim,iylim,izlim,dx,dy,dz)
       implicit none
-      integer i,j,k, ixlim, iylim, izlim, 
+      integer i,j,k, ixlim, iylim, izlim,
      .          ns, ix, iy, iz, rx, ry, rz
       real*8 x(ixlim,iylim,izlim),dx, dy, dz, x1, y1, z1
       character(len=*) filename
