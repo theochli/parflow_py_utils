@@ -1,25 +1,26 @@
-      subroutine test(nx,ny,arrin,arrout)
-      integer, intent(in) :: nx, ny
+      subroutine test(nx,ny,nz,dx,dy,dz,arroutfnam,arrin,arrout)
+      integer, intent(in) :: nx, ny, nz
       double precision dx,dy,dz
       double precision, dimension(nx,ny), intent(in) :: arrin
-      double precision, dimension(nx,ny,10), intent(out) :: arrout
-Cf2py intent(in) arrin
-Cf2py intent(out) arrout
-      character(100) arroutfnam
+      double precision, dimension(nx,ny,nz), intent(out) :: arrout
+      character*(*), arroutfnam
 
-      arroutfnam='testout.pfb'
+
+Cf2py intent(in) arrin, arroutfnam, nx,ny,nz,dx,dy,dz
+Cf2py intent(out) arrout
+
 
 C      print*,nx,ny,arrin
 
-      dx=10.0d0
-      dy=10.0d0
-      dz=1.0d0
+C      dx=10.0d0
+C      dy=10.0d0
+C      dz=1.0d0
 
 
 C Test operation to the array
       do i = 1, nx
            do j = 1, ny
-                do k = 1, 10
+                do k = 1, nz
                      if(k.eq.1) then
                          arrout(i,j,k) = 0
                      else
@@ -30,5 +31,5 @@ C Test operation to the array
       end do
 
 C     Write to pfb output
-      call pf_write(arrout,arroutfnam,nx,ny,10,dx,dy,dz)
+      call pf_write(arrout,arroutfnam,nx,ny,nz,dx,dy,dz)
       end subroutine test

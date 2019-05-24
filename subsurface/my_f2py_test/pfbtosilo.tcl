@@ -2,4 +2,5 @@ lappend auto_path $env(PARFLOW_DIR)/bin
 package require parflow
 namespace import Parflow::*
 
-pfsave [pfload "testout.pfb"] -silo "testout.silo"
+pfsave [pfload "outtest2.pfb"] -silo "outtest2.silo"
+
