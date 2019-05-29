@@ -14,6 +14,7 @@ C permutations.
       double precision, dimension(1,nlc), intent(in) :: lcin_flat
       double precision, dimension(nx,ny,1), intent(out) :: arrout
       integer :: nz
+      integer :: i,j,k
       character*(*), arroutfnam
 
 

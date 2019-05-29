@@ -11,6 +11,7 @@ C permutations.
       integer, intent(in) :: nx, ny, nz, nlc
       double precision, intent(in) :: dx,dy,dz
       integer, dimension(nx,ny), intent(in) :: arrin
+      integer :: i,j,k
       double precision, dimension(nz,nlc), intent(in) :: lcin
       double precision, dimension(nx,ny,nz), intent(out) :: arrout
       character*(*), arroutfnam
