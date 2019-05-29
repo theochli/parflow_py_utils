@@ -28,12 +28,12 @@ Cf2py intent(out) arrout
       color=2
 
 C The output file
-      open(13,file=arroutfnam,status='unknown',access='stream',
-     $form='unformatted')
+      open(13,file=arroutfnam,access='stream',
+     $form='formatted',status='unknown')
 
 C Write the header
       write(13,*) "x  y  lat    lon    sand clay color  fractional cover
-     $ age of grid by vegetation class (Must/Should Add to 1.0)"
+     $age of grid by vegetation class (Must/Should Add to 1.0)"
       write(13,*) "         (Deg)  (Deg)  (%/100) index  1    2    3   4
      $    5    6    7    8    9   10  11  12  13  14  15  16  17  18"
 
@@ -43,10 +43,11 @@ C Begin for-loop
                 do k = 1, 18
                      line(k)=0.0
                 end do
-                line(lcin_flat(1, arrin(i,j)))=1.0
+                line(lcin_flat(1,arrin(i,j)))=1.0
                 write(13,FMT=10) i,j,lat,lon,sand,clay,color,line
  10   format (I3, 1X, I3, 1X, F6.3, 1X, F7.3, 1X, F3.2, 1X, F3.2, 1X,
      $         I2, 1X, 18F5.2)
            end do
       end do
+      close(13)
       end subroutine createclmvegm
