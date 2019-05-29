@@ -19,7 +19,7 @@ C permutations.
 
 
 Cf2py intent(in) arrin, arroutfnam
-Cf2py intent(in) lcin
+Cf2py intent(in) lcin_flat
 Cf2py intent(in) nx,ny,nlc,dx,dy,dz
 Cf2py intent(out) arrout
 
