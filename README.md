@@ -23,7 +23,7 @@ f2py -c -m subsurface createpfb3.f createpfb2.f writepfb.f
 
 This command creates the module called `subsurface`, which can be called from within Python, with sub-modules `createpfb3` and `createpfb2`. You should see a file created in the directory after this step, similar to: `subsurface/cpython-37m-x86_64-linux-gnu.so`.
 
-### Running in python
+### Running subsurface pre-processing in python
 The module can now be called in python to create pfb files. For example:
 
 ```py
@@ -49,3 +49,34 @@ a = createpfb3(arrin = mat, dx = 1, dy = 1, dz = 1, nlc = 2, nx = 4, ny = 5, nz 
 b = createpfb2(arrin = mat, dx = 1, dy = 1, dz = 1, nlc = 2, nx = 4, ny = 5, lcin_flat = landco_mann, arroutfnam='testmann.pfb')
 
 ```
+
+### Running subsurface post-processing in python
+The following module is a *post-processing* step used to scale volumes that are calculated non-variable dz (vdz)-aware, on simulations that have used variable dz settings.
+
+**Note**: outputs of pfsimulator (including output silo files and water balance calculations) are non-vdz-aware. But, it appears that running pftools water balance calcs after the simulation does apply a scaling factor for variable dz. This means that if passing water balance checks relies on pfsimulator and pftools outputs matching, the waterbalance sill not match.
+
+On the command line, install the module:
+
+```
+f2py -c -m postproc scale_pfb.f pfb_read.f writepfb.f
+```
+
+```py
+from postproc import scale_pfb
+import numpy as np
+
+factors = np.array([[10.0],  # <- bottom
+                    [5.0],
+                    [2.5],
+                    [2.5],
+                    [1.0],
+                    [1.0],
+                    [0.5],
+                    [0.5],
+                    [0.5],
+                    [0.5]]) # <- top
+
+scale_pfb(pfbinfnam = 'subsurface_storage.0.pfb', vdzarr = factors, pfboutfnam = "test.pfb", nx = 12, ny = 10, dx = 10, dy = 10, dz = 1)
+
+```
+The above script will write a file called "test.pfb" which has the scaling factors applied to it.
