@@ -87,16 +87,16 @@ pfset dzScale.GeomNames            		domain
 pfset dzScale.Type            			nzList
 pfset dzScale.nzListNumber       		10
 
-pfset Cell.0.dzScale.Value 		   	10	
-pfset Cell.1.dzScale.Value 		   	5.0	
-pfset Cell.2.dzScale.Value 		   	2.5	
-pfset Cell.3.dzScale.Value 		   	2.5	
-pfset Cell.4.dzScale.Value 			1
-pfset Cell.5.dzScale.Value			1
-pfset Cell.6.dzScale.Value 			0.5
-pfset Cell.7.dzScale.Value 			0.5
-pfset Cell.8.dzScale.Value 			0.5
-pfset Cell.9.dzScale.Value			0.5
+pfset Cell.0.dzScale.Value 		   	2.0	
+pfset Cell.1.dzScale.Value 		   	2.0	
+pfset Cell.2.dzScale.Value 		   	2.0	
+pfset Cell.3.dzScale.Value 		   	1.0	
+pfset Cell.4.dzScale.Value 			1.0
+pfset Cell.5.dzScale.Value			1.0
+pfset Cell.6.dzScale.Value 			0.25
+pfset Cell.7.dzScale.Value 			0.25
+pfset Cell.8.dzScale.Value 			0.25
+pfset Cell.9.dzScale.Value			0.25
 
 #-----------------------------------------------------------------------------
 # Perm
@@ -193,7 +193,6 @@ set	end	20
 
 pfset TimingInfo.BaseUnit        		1
 pfset TimingInfo.StartCount      		$start
-pfset Patch.z-upper.BCPressure.rec.Value      0.00
 pfset TimingInfo.StartTime       	        $start
 pfset TimingInfo.StopTime        		$end
 pfset TimingInfo.DumpInterval    		1
