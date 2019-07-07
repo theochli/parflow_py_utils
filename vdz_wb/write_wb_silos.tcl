@@ -9,10 +9,12 @@ namespace import Parflow::*
 
 set tcl_precision 16
 
-set runname [lindex $argv 0]
-set start [lindex $argv 1]
-set end [lindex $argv 2]
+set rundir [lindex $argv 0]
+set runname [lindex $argv 1]
+set start [lindex $argv 2]
+set end [lindex $argv 3]
 
+cd $rundir
 set slope_x          [pfload $runname.out.slope_x.silo]
 set slope_y          [pfload $runname.out.slope_y.silo]
 set mannings         [pfload $runname.out.mannings.silo]

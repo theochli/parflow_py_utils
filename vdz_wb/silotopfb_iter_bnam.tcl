@@ -7,10 +7,13 @@ namespace import Parflow::*
 
 set tcl_precision 16
 
-set fbasenam [lindex $argv 0]
-set start [lindex $argv 1]
-set end [lindex $argv 2]
-set fw [lindex $argv 3]
+set rundir [lindex $argv 0]
+set fbasenam [lindex $argv 1]
+set start [lindex $argv 2]
+set end [lindex $argv 3]
+set fw [lindex $argv 4]
+
+cd $rundir
 
 for {set i $start } {$i <= $end} {incr i 1} {
 	if $fw {

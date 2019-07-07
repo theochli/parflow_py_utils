@@ -10,11 +10,12 @@
 set tcl_precision 17
 
 
+set rundir [lindex $argv 0]
+set bnam [lindex $argv 1]
+set start [lindex $argv 2]
+set end [lindex $argv 3]
 
-set bnam [lindex $argv 0]
-set start [lindex $argv 1]
-set end [lindex $argv 2]
-
+cd $rundir
 
 #
 # Import the ParFlow TCL package
