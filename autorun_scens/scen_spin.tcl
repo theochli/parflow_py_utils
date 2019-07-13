@@ -173,7 +173,7 @@ pfset Gravity					1.0
 # Dump outputs (silo) every 1 hour (36 seconds) (5 timesteps)
 
 set	start	0
-set	end	500
+set	end	43805
 pfset TimingInfo.BaseUnit        		1
 pfset TimingInfo.StartCount      		$start
 pfset TimingInfo.StartTime       	        $start
