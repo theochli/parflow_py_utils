@@ -1,6 +1,10 @@
 # This writes non-vdz-aware silo files,
 # using pftools
 # to be used as inputs to water balance scripts
+# Note: surface runoff is NOT written here
+# because should directly use the overlandsum silo
+# files to close the water balance.
+# pftools-calced surface runoff will not close.
 
 lappend auto_path $env(PARFLOW_DIR)/bin
 package require parflow
@@ -42,9 +46,5 @@ for {set i $start } {$i <= $end} {incr i 1} {
   set subsurface_storage [pfsubsurfacestorage $mask $porosity $pressure $saturation $specific_storage]
   pfsave $subsurface_storage -silo "subsurface_storage.$i.silo"
 
-  if { $i > $start} {
-     set surface_runoff [pfsurfacerunoff $top $slope_x $slope_y $mannings $pressure]
-     pfsave $surface_runoff -silo "surface_runoff.$i.silo"
-  }
 
 }
