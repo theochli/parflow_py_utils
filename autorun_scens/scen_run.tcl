@@ -53,7 +53,7 @@ pfset Geom.domain.Upper.Z                        10.0
 pfset Geom.domain.Patches "x-lower x-upper y-lower y-upper z-lower z-upper"
 
 pfset GeomInput.indinput.InputType		IndicatorField
-pfset Geom.indinput.FileName			ind_het1.pfb
+pfset Geom.indinput.FileName			ind_scen.pfb
 pfset GeomInput.indinput.GeomNames		"br sapr topurb topfor"
 
 pfset GeomInput.br.Value		        1	
@@ -93,7 +93,7 @@ pfset Geom.domain.Perm.Type             	PFBFile
 # in m/hr, based on K_sat for pervious
 #pfset Geom.domain.Perm.Value 			0.0000306
 
-pfset Geom.domain.Perm.FileName         	perm_het1.pfb
+pfset Geom.domain.Perm.FileName         	perm_scen.pfb
 
 pfset Perm.TensorType               		TensorByGeom
 
@@ -292,7 +292,7 @@ pfset TopoSlopesY.Geom.domain.Value   0.01
 #pfset Mannings.Type 				"Constant"
 pfset Mannings.Type				"PFBFile"
 pfset Mannings.GeomNames 			"domain"
-pfset Mannings.FileName				mann_het1.pfb
+pfset Mannings.FileName				mann_scen.pfb
 #pfset Mannings.Geom.domain.Value   		5.00e-5
 #pfset Mannings.Geom.domain.Value 0.035
 #pfset Mannings.domain.Value          0.00005 this doesn't work! but above does.
@@ -412,7 +412,7 @@ pfset ComputationalGrid.NZ                      1
 
 #pfdist slopey.pfb
 #pfdist slopex.pfb
-pfdist mann_het1.pfb
+pfdist mann_scen.pfb
 
 pfset ComputationalGrid.NZ                      10
 
@@ -420,8 +420,8 @@ pfset ComputationalGrid.NZ                      10
 #-----------------------------------------------------------------------------
 # Run ParFlow
 #-----------------------------------------------------------------------------
-pfdist ind_het1.pfb
-pfdist perm_het1.pfb
+pfdist ind_scen.pfb
+pfdist perm_scen.pfb
 
 pfrun slopes_only
 pfundist slopes_only
@@ -429,11 +429,11 @@ pfundist slopes_only
 pfset ComputationalGrid.NZ                      1
 #pfundist slopex.pfb
 #pfundist slopey.pfb
-pfundist mann_het1.pfb
+pfundist mann_scen.pfb
 
 pfset ComputationalGrid.NZ                      10
-pfundist ind_het1.pfb
-pfundist perm_het1.pfb
+pfundist ind_scen.pfb
+pfundist perm_scen.pfb
 
 
 #-----------------------------------------------------------------------------
