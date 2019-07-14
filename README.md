@@ -50,6 +50,13 @@ b = createpfb2(arrin = mat, dx = 1, dy = 1, dz = 1, nlc = 2, nx = 4, ny = 5, lci
 
 ```
 
+### Running CLM pre-processing
+To create scenario-specific landcover vegetation input file (drv_vegm_test.dat)
+Installation:
+```
+f2py -c -m clm createclmvegm.f
+```
+
 ### Running subsurface post-processing in python
 The following module is a *post-processing* step used to scale volumes that are calculated non-variable dz (vdz)-aware, on simulations that have used variable dz settings.
 
