@@ -50,9 +50,8 @@ factors = np.array([[2.0],  # <- bottom
                     [0.25],
                     [0.25]]) # <- top
 
-for i in range(0,2):
+for i in range(3,7):
     scen = 'scen%03d' %i
-
 
     print('Now processing... %s' %scen)
 
@@ -66,6 +65,7 @@ for i in range(0,2):
     shutil.copy2('%s/dauphco.nldas.10yr.txt' %common_inputs_dir, '.')
     shutil.copy2('%s/drv_clmin.dat' %common_inputs_dir, '.')
     shutil.copy2('%s/drv_vegp.dat' %common_inputs_dir, '.')
+    shutil.copy2('%s/spin3.out.press.pfb' %common_inputs_dir, '.')
 
     print('    Run inputs copied')
 
@@ -114,7 +114,7 @@ for i in range(0,2):
     print('year-on-year subsurf storage percent change:\n')
     print(ss['sum_val'][list(np.multiply(8610, [0,1,2,3,4,5]))].pct_change())
 
-    if abs(ss['sum_val'][list(np.multiply(8610, [0,1,2,3,4,5]))].pct_change().tail(1)) > 0.01:
+    if (abs(ss['sum_val'][list(np.multiply(8610, [0,1,2,3,4,5]))].pct_change().tail(1)) > 0.01).iloc[0] > 0.01:
         print('    WARNING %s spinup change from year 4 to year 5 NOT LESS THAN 1pc' %scen)
         print('    continuing with next scenario...')
         print('===========================================================')
@@ -123,8 +123,8 @@ for i in range(0,2):
     print('    Spinup stabilization PASSED')
 
     # Save and rename the last pressure file
-    print('    saving scenario-specific slopes_only_out.press43805.pfb as %s/%s/spin4.out.press.pfb...' %(scendir_base, scen))
-    os.rename('slopes_only.out.press.43805.pfb', '%s/%s/spin4.out.press.pfb' %(scendir_base, scen))
+    print('    saving scenario-specific slopes_only_out.press43805.pfb as %s/%s/spin4.out.press.pfb...' %(specif_inputs_dir, scen))
+    os.rename('slopes_only.out.press.43805.pfb', '%s/%s/spin4.out.press.pfb' %(specif_inputs_dir, scen))
 
     # Removing spinup run files to save memory
     print('    Removing all spinup run files...')
@@ -133,9 +133,9 @@ for i in range(0,2):
     ####################################################
     # Run scenario one-year simulation for water balance
     ####################################################
-    scen_files = os.listdir(scendir)
+    scen_files = os.listdir('%s/%s' %(specif_inputs_dir, scen))
     for file_name in scen_files:
-        full_file_name = os.path.join(scendir, file_name)
+        full_file_name = os.path.join('%s/%s' %(specif_inputs_dir, scen), file_name)
         if os.path.isfile(full_file_name):
             shutil.copy(full_file_name, '.')
 
@@ -184,7 +184,7 @@ for i in range(0,2):
     silo2pfb(rundir = rundir, bnam ='surface_storage' , start= 0, stop=cur_stop)
     s = sumoverdomain(rundir = rundir, bnam = 'surface_storage',start = 0, stop= cur_stop)
     print('    Example of surface storage s.head()\n')
-    print(ss.head(10))
+    print(s.head(10))
 
     # Subsurface storage
     # convert silos to pfbs

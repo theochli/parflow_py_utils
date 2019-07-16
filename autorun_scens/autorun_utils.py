@@ -67,30 +67,36 @@ def sumoverdomain(rundir, bnam, start, stop):
 
 # Delete Run Files
 def delete_run_files():
-    start = time.time()
-    p1 = subprocess.Popen(split('find . -name "slopes_only*" -print0'), stdout=subprocess.PIPE)
-    p2 = subprocess.Popen(split('xargs -0 rm -rf'), stdin=p1.stdout)
-    print('Removed slopes_only*')
-    end = time.time()
-    print('Time Elapsed:  %s s' %(end - start))
+    # slopes_only*
+    fileList = glob.glob('./slopes_only**', recursive=True)
+    for filePath in fileList:
+        try:
+            os.remove(filePath)
+        except:
+            print("Error while deleting file : ", filePath)
 
-    start = time.time()
-    p1 = subprocess.Popen(split('find . -name  "*silo"  -print0'), stdout=subprocess.PIPE)
-    p2 = subprocess.Popen(split('xargs -0 rm -rf'), stdin=p1.stdout)
-    print('Removed *silo')
-    end = time.time()
-    print('Time Elapsed:  %s s' %(end - start))
+    # .silos
+    fileList = glob.glob('./*.silo', recursive=True)
+    for filePath in fileList:
+        try:
+            os.remove(filePath)
+        except:
+            print("Error while deleting file : ", filePath)
 
-    start = time.time()
-    p1 = subprocess.Popen(split('find . -name  "*pfb"  -print0'), stdout=subprocess.PIPE)
-    p2 = subprocess.Popen(split('xargs -0 rm -rf'), stdin=p1.stdout)
-    print('Removed *pfb')
-    end = time.time()
-    print('Time Elapsed:  %s s' %(end - start))
 
-    start = time.time()
-    p1 = subprocess.Popen(split('find . -name  "gp*"  -print0'), stdout=subprocess.PIPE)
-    p2 = subprocess.Popen(split('xargs -0 rm -rf'), stdin=p1.stdout)
-    print('Removed gp*')
-    end = time.time()
-    print('Time Elapsed:  %s s' %(end - start))
+    # .pfbs
+    fileList = glob.glob('./*.pfb', recursive=True)
+    for filePath in fileList:
+        try:
+            os.remove(filePath)
+        except:
+            print("Error while deleting file : ", filePath)
+
+
+    # gp*
+    fileList = glob.glob('./gp*', recursive=True)
+    for filePath in fileList:
+        try:
+            os.remove(filePath)
+        except:
+            print("Error while deleting file : ", filePath)
