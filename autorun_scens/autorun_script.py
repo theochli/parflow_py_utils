@@ -33,7 +33,10 @@ import numpy as np
 from shlex import split
 
 from autorun_utils import *
+import sys
 
+logfile = open('runscenarios.log', 'a')
+sys.stdout = logfile
 
 rundir = '/home/theo/pf_files/pf_machine/scenarios/rundir'
 specif_inputs_dir = '/home/theo/pf_files/pf_machine/scenarios/scens_inputs_specific'
@@ -50,7 +53,7 @@ factors = np.array([[2.0],  # <- bottom
                     [0.25],
                     [0.25]]) # <- top
 
-for i in range(0,116):
+for i in range(7,116):
     scen = 'scen%03d' %i
 
     print('Now processing... %s' %scen)
@@ -65,7 +68,7 @@ for i in range(0,116):
     shutil.copy2('%s/dauphco.nldas.10yr.txt' %common_inputs_dir, '.')
     shutil.copy2('%s/drv_clmin.dat' %common_inputs_dir, '.')
     shutil.copy2('%s/drv_vegp.dat' %common_inputs_dir, '.')
-    shutil.copy2('%s/spin3.out.press.pfb' %common_inputs_dir, '.')
+    shutil.copy2('%s/spin03.out.press.pfb' %common_inputs_dir, '.')
 
     print('    Run inputs copied')
 
@@ -114,8 +117,8 @@ for i in range(0,116):
     print('year-on-year subsurf storage percent change:\n')
     print(ss['sum_val'][list(np.multiply(8610, [0,1,2,3,4,5]))].pct_change())
 
-    if (abs(ss['sum_val'][list(np.multiply(8610, [0,1,2,3,4,5]))].pct_change().tail(1)) > 0.01).iloc[0] > 0.01:
-        print('    WARNING %s spinup change from year 4 to year 5 NOT LESS THAN 1pc' %scen)
+    if (sum((abs(ss['sum_val'][list(np.multiply(8610, [0,1,2,3,4,5]))].pct_change())) < 0.01)== 0):
+        print('    WARNING %s: No years where pct change in vdz subsurf storage < 1 pct' %scen)
         print('    continuing with next scenario...')
         print('===========================================================')
         break
