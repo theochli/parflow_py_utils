@@ -58,14 +58,16 @@ f2py -c -m clm createclmvegm.f
 ```
 
 ### Running subsurface post-processing in python
-The following module is a *post-processing* step used to scale volumes that are calculated non-variable dz (vdz)-aware, on simulations that have used variable dz settings.
+The following module is a *post-processing* step used to do two things on simulations that have used variable dz settings:
+1. scale volumes that are calculated non-variable dz (vdz)-aware
+2. calculate the vdz-aware water table depths
 
-**Note**: outputs of pfsimulator (including output silo files and water balance calculations) are non-vdz-aware. But, it appears that running pftools water balance calcs after the simulation does apply a scaling factor for variable dz. This means that if passing water balance checks relies on pfsimulator and pftools outputs matching, the waterbalance sill not match.
+**Note**: outputs of pfsimulator (including output silo files and water balance calculations) are non-vdz-aware. But, it appears that running pftools water balance calcs after the simulation does apply a scaling factor for variable dz. This means that if passing water balance checks relies on pfsimulator and pftools outputs matching, the waterbalance will not match.
 
 On the command line, install the module:
 
 ```
-f2py -c -m postproc scale_pfb.f pfb_read.f writepfb.f
+f2py -c -m postproc scale_pfb.f vdz_watertable.f  pfb_read.f writepfb.f
 ```
 
 ```py
@@ -87,3 +89,34 @@ scale_pfb(pfbinfnam = 'subsurface_storage.0.pfb', vdzarr = factors, pfboutfnam =
 
 ```
 The above script will write a file called "test.pfb" which has the scaling factors applied to it.
+
+
+For scaling watertable, this is based on saturation files, and calculates the depth to the top-most layer that has a saturation =1:
+
+```py
+from postproc import vdz_watertable
+import numpy as np
+
+factors = np.array([[2.0],  # <- bottom
+                    [2.0],
+                    [2.0],
+                    [1.0],
+                    [1.0],
+                    [1.0],
+                    [0.5],
+                    [0.5],
+                    [0.5],
+                    [0.5]]) # <- top
+
+mats = []
+
+for i in range(0,8761):
+    infnam='slopes_only.out.satur.%05d.pfb' %i
+    outfnam = 'watertable.out.%s.pfb' %i
+
+    a = vdz_watertable(pfbinfnam = infnam, vdzarr = factors, pfboutfnam = outfnam,
+         nx = 12, ny = 10, nz = 10, dx = 10, dy = 10, dz = 1)
+
+    mats.append(a)
+
+```
