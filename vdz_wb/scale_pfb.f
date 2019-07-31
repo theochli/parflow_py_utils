@@ -13,7 +13,7 @@ C of simulation
       character*(*), pfboutfnam
       integer :: i,j
       double precision, dimension(nx,ny,nz) :: arrin
-      double precision, dimension(nx,ny,nz):: arrout
+      double precision, dimension(nx,ny,nz), intent(out):: arrout
 
 Cf2py intent(in) pfbinfnam, vdzarr, pfboutfnam
 Cf2py intent(in) nx,ny
@@ -48,6 +48,6 @@ C      print*, arrout
 
 C write to pfb output
 
-      call pf_write(arrout,pfboutfnam,nx,ny,nz,dx,dy,dz)
+      call pf_write(arrout,pfboutfnam,nx,ny,1,dx,dy,dz)
 
       end subroutine scale_pfb
