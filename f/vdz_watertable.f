@@ -12,7 +12,7 @@ C of simulation
       double precision, dimension(nz,1), intent(in) :: vdzarr
       character*(*), pfbinfnam
       character*(*), pfboutfnam
-      integer :: i,j
+      integer :: i,j,k,kk
       double precision, dimension(nx,ny,nz) :: arrin
       integer, dimension(nx,ny) :: arrmed
       double precision,dimension(nx,ny),intent(out) :: arrout
@@ -33,21 +33,57 @@ C For each horizontal position (i,j), find the top-most
 C  layer that has saturation == 1, save that in an
 C  intermediate array
 
-      do i = 1, nx
-
-            do j = 1, ny
+      iloop: do i = 1, nx
+            print *, 'i = ', i
+            jloop: do j = 1, ny
+                  print *, 'j = ', j
 C From the top of the domain, check if saturated
 C   record highest layer number that is saturated in arrmed
-                  do k = nz, 1, -1
-                        if (arrin(i,j,k).eq.1) then
-                              arrmed(i,j)= k
-                              exit
+                  kloop: do k = nz, 1, -1
+                     print *, 'k = ', k
+                     print *, 'arrin(i,j,k) = ', arrin(i,j,k)
+                     if (arrin(i,j,k).eq.1) then
+C                      check if all layers under it are 1
+                        kk = k-1
+                        
+                        if (kk.eq.0) then
+                          arrmed(i,j)=k
+                          print*, 'arrmed(i,j,k) set to ', k
+                          print*, '***********************'
+C                         this means k = 1, bottom of domain
+C                         nothing to check underneath
+                          exit kloop
+                        end if 
+                        
+                        kkloop: do while (kk.ge.1)
+                          print *, 'kk=', kk 
+                          print *, 'arrin(i,j,kk) = ', arrin(i,j,kk)
+                        
+                          
+                          if (arrin(i,j,kk).ne.1) then
+C                           go to next k down (continue kloop) 
+                            exit kkloop
+                          else 
+                            kk=kk-1 ! goto next layer down
+                          endif
+                        
+                        if ((kk.eq.1).and.(arrin(i,j,1).eq.1)) then 
+C                       did not exit before getting to bottom
+C                       ie, from k to bottom, layers under
+C                       are saturated
+                          arrmed(i,j)=k
+                          print*, 'arrmed(i,j,k) set to ', k
+                          print*, '************************'
+                          exit kloop
                         end if
+                        
+                        
+                        end do kkloop 
+                    end if       
+                  end do kloop
 
-                  end do
-
-            end do
-      end do
+            end do jloop
+      enddo iloop
 
 
 C Apply vdz layer depths to arrmed to
@@ -59,10 +95,10 @@ C get depth to watertable
                         arrout(i,j) = 0
                 elseif (arrmed(i,j).eq.int(9)) then
                         arrout(i,j)=0.5
-                        print*,arrout(i,j)
+C                        print*,arrout(i,j)
                   else
                         arrout(i,j)=sum(vdzarr((arrmed(i,j)):(nz-1),1))
-                        print*,arrout(i,j)
+C                        print*,arrout(i,j)
                   end if
             end do
        end do
