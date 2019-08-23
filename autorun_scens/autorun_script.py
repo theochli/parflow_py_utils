@@ -53,7 +53,7 @@ factors = np.array([[2.0],  # <- bottom
                     [0.25],
                     [0.25]]) # <- top
 
-for i in range(50,116):
+for i in range(0,116):
     scen = 'scen%03d' %i
 
     print('Now processing... %s' %scen)
@@ -255,6 +255,50 @@ for i in range(50,116):
     # Save the water balance
     wb.to_csv('/home/theo/pf_files/pf_machine/scenarios/wb_outputs/wb_%s.csv' %scen)
 
+    
+    ###############################
+    # Calculate Water Table Depth
+    ###############################
+
+    print('    Beginning water table calcs...')
+
+    matlist = [] # list to store each timestep's water table matrix
+
+    for t in range(0,8761):
+        infnam = 'slopes_only.out.satur.%05d.pfb' %t
+        outfnam = 'watertable.out.%s.pfb' %t
+
+        # calc
+        a = vdz_watertable(pfbinfnam = infnam, vdzarr = factors, pfboutfnam = outfnam,
+                nx = 12, ny = 10, nz = 10, dx = 10, dy = 10, dz = 1)
+
+        matlist.append(a)
+
+     ###############################################
+    # Calculate summary stats over time, across space
+    ################################################
+    wt_outdir = '/home/theo/pf_files/pf_machine/scenarios/wt_outputs2'
+    # stack all matrices in list into an array:
+    newarray = np.dstack(matlist)
+    
+    m = np.mean(newarray, axis = 2)
+    np.savetxt('%s/%s_mean_wtdepth.csv' %(wt_outdir,scen) ,m)
+
+    m = np.std(newarray, axis = 2)
+    np.savetxt('%s/%s_sd_wtdepth.csv' %(wt_outdir,scen)  ,m)
+
+    m = np.min(newarray, axis = 2)
+    np.savetxt('%s/%s_min_wtdepth.csv' %(wt_outdir,scen)  ,m)
+
+    m = np.max(newarray, axis = 2)
+    np.savetxt('%s/%s_max_wtdepth.csv' %(wt_outdir,scen) ,m)
+
+    m = np.median(newarray, axis = 2)
+    np.savetxt('%s/%s_median_wtdepth.csv' %(wt_outdir,scen)  ,m)
+
+    
+    
+    
     # Remove run files to save memory
     print('    Removing all simulation run files...')
     delete_run_files()
