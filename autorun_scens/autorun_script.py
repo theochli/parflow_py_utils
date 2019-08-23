@@ -53,7 +53,7 @@ factors = np.array([[2.0],  # <- bottom
                     [0.25],
                     [0.25]]) # <- top
 
-for i in range(7,116):
+for i in range(50,116):
     scen = 'scen%03d' %i
 
     print('Now processing... %s' %scen)
