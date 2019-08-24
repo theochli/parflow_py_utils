@@ -25,7 +25,7 @@ import os
 import shutil
 import time
 
-from postproc import scale_pfb
+from postproc import scale_pfb, vdz_watertable
 import pandas as pd
 from io import StringIO
 import itertools
@@ -39,7 +39,7 @@ logfile = open('runscenarios.log', 'a')
 sys.stdout = logfile
 
 rundir = '/home/theo/pf_files/pf_machine/scenarios/rundir'
-specif_inputs_dir = '/home/theo/pf_files/pf_machine/scenarios/scens_inputs_specific'
+specif_inputs_dir = '/home/theo/pf_files/pf_machine/scenarios/scens_inputs_specific20'
 common_inputs_dir = '/home/theo/pf_files/pf_machine/scenarios/scens_inputs_common'
 
 factors = np.array([[2.0],  # <- bottom
@@ -53,7 +53,7 @@ factors = np.array([[2.0],  # <- bottom
                     [0.25],
                     [0.25]]) # <- top
 
-for i in range(0,116):
+for i in range(0,10):
     scen = 'scen%03d' %i
 
     print('Now processing... %s' %scen)
@@ -79,6 +79,7 @@ for i in range(0,116):
     start = time.time()
     bashCommand = "tclsh scen_spin.tcl"
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+    process.wait()
     output, error = process.communicate()
     end = time.time()
     print('    Scenario-specific spinup complete.\n    Time Elapsed:  %s s' %(end - start))
@@ -93,6 +94,7 @@ for i in range(0,116):
     # create silos needed for subsurf stor
     bashCommand = "tclsh write_subsurf_silos.tcl %s %s %s %s" %(rundir,'slopes_only',0,cur_stop)
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+    process.wait()
     output, error = process.communicate()
     print(output)
     print(error)
@@ -101,9 +103,9 @@ for i in range(0,116):
     silo2pfb(rundir = rundir, bnam ='subsurface_storage' , start= 0, stop=cur_stop)
 
     # scale pfbs using factors
-    for i in range(0,cur_stop+1):
-        infnam = '%s/subsurface_storage.%s.pfb' %(rundir, i)
-        outfnam = '%s/vdz_subsurface_storage.%s.pfb' %(rundir,i)
+    for t in range(0,cur_stop+1):
+        infnam = '%s/subsurface_storage.%s.pfb' %(rundir, t)
+        outfnam = '%s/vdz_subsurface_storage.%s.pfb' %(rundir,t)
 
         scale_pfb(pfbinfnam = infnam, vdzarr = factors, pfboutfnam = outfnam,
              nx = 12, ny = 10, dx = 10, dy = 10, dz = 1)
@@ -126,8 +128,8 @@ for i in range(0,116):
     print('    Spinup stabilization PASSED')
 
     # Save and rename the last pressure file
-    print('    saving scenario-specific slopes_only_out.press43805.pfb as %s/%s/spin4.out.press.pfb...' %(specif_inputs_dir, scen))
-    os.rename('slopes_only.out.press.43805.pfb', '%s/%s/spin4.out.press.pfb' %(specif_inputs_dir, scen))
+    print('    saving scenario-specific slopes_only_out.press.43805.pfb as %s/%s/spin4.out.press.pfb...' %(specif_inputs_dir, scen))
+    os.rename('slopes_only.out.press.%05d.pfb' %cur_stop, '%s/%s/spin4.out.press.pfb' %(specif_inputs_dir, scen))
 
     # Removing spinup run files to save memory
     print('    Removing all spinup run files...')
@@ -148,6 +150,7 @@ for i in range(0,116):
     start = time.time()
     bashCommand = "tclsh scen_run.tcl"
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+    process.wait()
     output, error = process.communicate()
     end = time.time()
     print('    Scenario one-year simulation complete.\n    Time Elapsed:  %s s' %(end - start))
@@ -160,6 +163,7 @@ for i in range(0,116):
     # Write silo files for water balance
     bashCommand = "tclsh write_wb_silos.tcl %s %s %s %s" %(rundir,'slopes_only',0,cur_stop)
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+    process.wait()
     output, error = process.communicate()
     print(output)
     print(error)
@@ -194,9 +198,9 @@ for i in range(0,116):
     silo2pfb(rundir = rundir, bnam ='subsurface_storage' , start= 0, stop=cur_stop)
 
     # scale pfbs using factors
-    for i in range(0,cur_stop+1):
-        infnam = '%s/subsurface_storage.%s.pfb' %(rundir, i)
-        outfnam = '%s/vdz_subsurface_storage.%s.pfb' %(rundir,i)
+    for t in range(0,cur_stop+1):
+        infnam = '%s/subsurface_storage.%s.pfb' %(rundir, t)
+        outfnam = '%s/vdz_subsurface_storage.%s.pfb' %(rundir,t)
 
         scale_pfb(pfbinfnam = infnam, vdzarr = factors, pfboutfnam = outfnam,
              nx = 12, ny = 10, dx = 10, dy = 10, dz = 1)
@@ -212,9 +216,9 @@ for i in range(0,116):
          bnam ='slopes_only.out.evaptranssum' , start= 1, stop=cur_stop, fw = 1)
 
     # scale pfbs using factors
-    for i in range(1,cur_stop):
-        infnam = '%s/evaptranssum.%s.pfb' %(rundir, i)
-        outfnam = '%s/vdz_evaptranssum.%s.pfb' %(rundir,i)
+    for t in range(1,cur_stop):
+        infnam = '%s/evaptranssum.%s.pfb' %(rundir, t)
+        outfnam = '%s/vdz_evaptranssum.%s.pfb' %(rundir,t)
 
         scale_pfb(pfbinfnam = infnam, vdzarr = factors, pfboutfnam = outfnam,
              nx = 12, ny = 10, dx = 10, dy = 10, dz = 1)
@@ -253,7 +257,7 @@ for i in range(0,116):
         break
 
     # Save the water balance
-    wb.to_csv('/home/theo/pf_files/pf_machine/scenarios/wb_outputs/wb_%s.csv' %scen)
+    wb.to_csv('/home/theo/pf_files/pf_machine/scenarios/wb_outputs20/wb_%s.csv' %scen)
 
     
     ###############################
@@ -264,7 +268,7 @@ for i in range(0,116):
 
     matlist = [] # list to store each timestep's water table matrix
 
-    for t in range(0,8761):
+    for t in range(0,cur_stop):
         infnam = 'slopes_only.out.satur.%05d.pfb' %t
         outfnam = 'watertable.out.%s.pfb' %t
 
@@ -277,7 +281,7 @@ for i in range(0,116):
      ###############################################
     # Calculate summary stats over time, across space
     ################################################
-    wt_outdir = '/home/theo/pf_files/pf_machine/scenarios/wt_outputs2'
+    wt_outdir = '/home/theo/pf_files/pf_machine/scenarios/wt_outputs20'
     # stack all matrices in list into an array:
     newarray = np.dstack(matlist)
     
