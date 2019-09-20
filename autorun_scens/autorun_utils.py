@@ -15,6 +15,96 @@ import numpy as np
 from shlex import split
 
 
+# Helper scripts to generate scenarios dictionary
+
+
+def find_factors(value):
+    '''
+    A function to get all factor pairs of a given integer
+    Outputs a list of tuples
+    '''
+    factors = []
+    for i in range(1, int(value**0.5)+1):
+        if value % i == 0:
+            factors.append((float(i), value / i))
+    return factors
+
+def prune_f_pairs(f_pairs, dom_dx, dom_dy):
+    '''
+    Removes factor pairs whose dimensions exceed the domains
+    (will not fit into domain as one "patch")
+    '''
+    new_fp = []
+    for f in f_pairs:
+        if max(f) > max(dom_dx,dom_dy): # one pair of the factor exceeds the domain, need to check if it exceeds the other
+            if max(f) <= min(dom_dx,dom_dy): # if it does, then don't keep this pair
+                new_fp.append(f)
+        else:
+            new_fp.append(f)
+
+    return(new_fp)
+
+def make_combinations(list1, list2):
+    '''
+    make combinations given two lists
+    '''
+    combs = []
+    for element in itertools.product(list1, list2):
+            combs.append(element)
+    return(combs)
+
+
+def get_upper_left_index(dom_x, dom_y, f_pairs):
+    '''
+    A list of feasible upper left indexes, given dims of domain
+    and dims of patch
+    '''
+
+    results = []
+
+    for f in f_pairs:
+
+        # can patch's longside be oriented on x?
+        if max(f) <= dom_x:
+            patch_dims = (max(f), min(f))
+            x_ind_list = list(range(0, dom_x - int(max(f)) + 1) )
+            # then the short side (min(f)), has to be oriented on y:
+            y_ind_list = list(range(0, dom_y - int(min(f)) + 1) )
+
+            upper_left_indices = make_combinations(x_ind_list, y_ind_list)
+
+            results.append({'patch_xdim': patch_dims[0],
+                        'patch_ydim':  patch_dims[1],
+                        'upperleftind':upper_left_indices })
+        else:
+            print("cannot be oriented with long side on x")
+            upper_left_indices = []
+
+        # can patch's longside be oriented on y?
+        if max(f) <= dom_y:
+            patch_dims = (min(f), max(f))
+            x_ind_list = list(range(0, dom_x - int(min(f)) + 1) )
+            y_ind_list = list(range(0, dom_y - int(max(f)) + 1) )
+
+            upper_left_indices = make_combinations(x_ind_list, y_ind_list)
+
+            results.append({'patch_xdim': patch_dims[0],
+                        'patch_ydim':  patch_dims[1],
+                        'upperleftind':upper_left_indices })
+        else:
+            print("cannot be oriented with long side on y")
+            upper_left_indices = []
+
+    return(results)
+
+
+
+
+
+
+
+
+
 # Post Processing
 def silo2pfb(rundir, bnam, start, stop, fw=0):
     '''
